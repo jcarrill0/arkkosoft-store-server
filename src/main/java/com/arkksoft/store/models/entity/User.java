@@ -23,5 +23,10 @@ public class User {
     @ManyToOne
     @JoinColumn(name="roleId")
     private Role role;
+
+    @PrePersist
+    public void prePersist() {
+        createAt = new Date();
+    }
 }
 
