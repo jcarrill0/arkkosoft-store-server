@@ -1,6 +1,8 @@
 package com.arkksoft.store.models.entity;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.*;
 
@@ -13,16 +15,20 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String name;
     private String email;
     private String password;
     @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false, updatable = false)
     private Date createAt; 
 
-    @ManyToOne
-    @JoinColumn(name="roleId")
-    private Role role;
+    @Enumerated(EnumType.STRING)
+    @ElementCollection(fetch = FetchType.EAGER)
+    private Set<Role> roles = new HashSet<>();
+
+    public User(String email, String password) {
+        this.email = email;
+        this.password = password;
+    }
 
     @PrePersist
     public void prePersist() {
