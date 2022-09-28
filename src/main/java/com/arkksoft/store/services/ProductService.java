@@ -2,6 +2,7 @@ package com.arkksoft.store.services;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +45,22 @@ public class ProductService {
 
         data.put("product", productDao.save(product));
        
+        return data;
+    }
+
+
+    public Map<String, Object> addProductImage(Long id, MultipartFile file) {
+        Map<String, Object> data = new HashMap<>();
+        Optional<Product> product = productDao.findById(id);
+
+        if(product.isEmpty()) 
+            throw new RuntimeException("El PRODUCTO NO EXISTE");
+
+        String imageUrl = cloudinaryService.upload(file);
+        product.get().setImage(imageUrl);
+
+        data.put("product", productDao.save(product.get()));
+
         return data;
     }
 

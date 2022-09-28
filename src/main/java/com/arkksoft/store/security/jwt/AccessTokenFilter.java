@@ -1,7 +1,6 @@
 package com.arkksoft.store.security.jwt;
 
 import java.io.IOException;
-import java.util.Optional;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -10,16 +9,18 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.arkksoft.store.services.UsuarioDetails;
 import com.arkksoft.store.services.UsuarioDetailsService;
 
+@Component
 public class AccessTokenFilter extends OncePerRequestFilter {
     @Autowired
     private UsuarioDetailsService userDetailsService;
@@ -37,17 +38,22 @@ public class AccessTokenFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
         String token = getToken(request);
-        String username = jwtUtils.extractUsername(token);
-        
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-            SecurityContextHolder.getContext().setAuthentication(createAuthentication(token, userDetails, request));
+       
+        if(token != null) {
+            String email =  jwtUtils.extractEmail(token);
+            
+            if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                UsuarioDetails userDetails = (UsuarioDetails) userDetailsService.loadUserByUsername(email);
+                SecurityContextHolder.getContext().setAuthentication(createAuthentication(token, userDetails, request));
+            } 
+        } else {
+            SecurityContextHolder.clearContext();
         }
 
         chain.doFilter(request, response);
     }
 
-    private Authentication createAuthentication(String token, UserDetails userDetails, HttpServletRequest request) {
+    private Authentication createAuthentication(String token, UsuarioDetails userDetails, HttpServletRequest request) {
         UsernamePasswordAuthenticationToken authToken = null;
         if (jwtUtils.validateToken(token, userDetails)) {
             authToken = new UsernamePasswordAuthenticationToken(
@@ -61,9 +67,13 @@ public class AccessTokenFilter extends OncePerRequestFilter {
     }
 
     private String getToken(HttpServletRequest request) {
-        return Optional.ofNullable(request.getHeader(HttpHeaders.AUTHORIZATION))
-                .filter(auth -> auth.startsWith("Berear "))
-                .map(auth -> auth.replace("Bearer ", ""))
-                .orElseThrow(() -> new BadCredentialsException("INVALID_TOKEN"));
+        String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+        String token = null;
+
+        if (StringUtils.hasText(authHeader) && authHeader.startsWith("Bearer ")) {
+            token = authHeader.replace("Bearer ", "");
+        }
+
+        return token;
     }
 }

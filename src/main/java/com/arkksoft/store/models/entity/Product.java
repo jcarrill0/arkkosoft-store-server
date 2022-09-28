@@ -11,9 +11,6 @@ import lombok.*;
 @Entity
 @Data
 @Table(name = "product")
-/* @JsonIdentityInfo(
-    generator = ObjectIdGenerators.PropertyGenerator.class,
-    property = "id") */
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,7 +26,7 @@ public class Product {
     private Date createAt;
 
     @ManyToOne
-    @JsonBackReference
+    @JsonIgnore
     @JoinColumn(name="categoryId")
     private Category category;
 

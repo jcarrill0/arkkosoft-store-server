@@ -5,7 +5,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import javax.persistence.EntityNotFoundException;
 
 import com.arkksoft.store.models.dao.UserDao;
 import com.arkksoft.store.models.entity.User;
@@ -17,7 +16,7 @@ public class UsuarioDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException  {
-        User user = userDao.findUserByEmail(email).orElseThrow(() -> new EntityNotFoundException("User not found by email!"));
+        User user = userDao.findUserByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not found by email!"));
 
         return UsuarioDetails.build(user);
     }

@@ -1,9 +1,11 @@
 package com.arkksoft.store.services;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
@@ -22,6 +24,7 @@ import org.springframework.stereotype.Service;
 import com.arkksoft.store.dto.AuthDTO;
 import com.arkksoft.store.dto.TokenDTO;
 import com.arkksoft.store.models.dao.UserDao;
+import com.arkksoft.store.models.entity.Role;
 import com.arkksoft.store.models.entity.User;
 import com.arkksoft.store.security.jwt.JwtUtils;
 
@@ -53,7 +56,7 @@ public class AuthService {
 
        List<String> roles = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList());
 
-        return new TokenDTO(jwt,userDetails.getEmail(),roles);
+        return new TokenDTO(jwt,userDetails.getEmail(), roles);
     }
 
     public Map<String, Object> signup(AuthDTO request) {
@@ -76,16 +79,30 @@ public class AuthService {
     }
 
     @Transactional
-    public Authentication authenticate(String username, String password) throws Exception {
+    public Authentication authenticate(String email, String password) throws Exception {
         Authentication authentication = null;
         try {
             authentication = authenticationManager
-                    .authenticate(new UsernamePasswordAuthenticationToken(username, password));
+                    .authenticate(new UsernamePasswordAuthenticationToken(email, password));
         } catch (DisabledException e) {
            throw new DisabledException("USER_DISABLED: ", e);
         } catch (BadCredentialsException e) {
             throw new BadCredentialsException("INVALID_CREDENTIALS: ", e);
         }
         return authentication;
+    }
+
+    public void initUserSuperAdmin(){
+        if(userDao.findUserByEmail("superadmin@superadmin.com").isEmpty()){
+            Set<Role> roles = new HashSet<>();
+            roles.add(Role.ROLE_ADMIN);
+            String passEncrypt = passEncoder.encode("abc123");
+
+            User superAdminUser = new User("superadmin@superadmin.com", passEncrypt);
+            superAdminUser.setRoles(roles);
+            userDao.save(superAdminUser);
+        } else {
+            System.out.println("EXISTE EN LA BASE DE DATOS");
+        }
     }
 }

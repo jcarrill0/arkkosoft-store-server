@@ -62,13 +62,10 @@ public class CategoryService {
         return data;
     }
 
-    public Map<String, Object> updateCategory(Long id, CategoryDTO categoryDTO) {
+    public Map<String, Object> updateCategory(CategoryDTO categoryDTO) {
         Map<String, Object> data = new HashMap<>();
-        //String msg = "El personaje con id: "+id+" no existe en la base de datos!!";
-
-        ///productDao.deleteById(id);
-
-        data.put("message", "Categoria con id: "+id+" fue eliminado exitosamente!!");
+        Category category = mapFromDto(categoryDTO);
+        data.put("category", categoryDao.save(category));
         return data;
     }
 

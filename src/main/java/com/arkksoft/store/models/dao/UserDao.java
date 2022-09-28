@@ -10,4 +10,7 @@ import com.arkksoft.store.models.entity.User;
 @Repository
 public interface UserDao extends JpaRepository<User, Long> {
     Optional<User> findUserByEmail(String email);
+
+    /* @Query(value = "select * from users where email= :email", nativeQuery = true)
+    Optional<User> findUserByEmail(@Param("email") String email); */
 }

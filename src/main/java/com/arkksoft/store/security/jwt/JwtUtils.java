@@ -9,13 +9,15 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Service;
 
 import com.arkksoft.store.models.dao.UserDao;
 import com.arkksoft.store.services.UsuarioDetails;
 
 import io.jsonwebtoken.*;
 
+
+@Service
 public class JwtUtils {
     @Value("${arkkosoft.app.JWT_SECRET_KEY}")
     private String JWT_SECRET_KEY;
@@ -30,7 +32,7 @@ public class JwtUtils {
     UserDao userDao;
 
     //retrieve username from jwt token
-    public String extractUsername(String token) {
+    public String extractEmail(String token) {
         return extractClaim(token, Claims::getSubject).split("\\|")[0];
     }
     
@@ -68,7 +70,7 @@ public class JwtUtils {
 
     //generate token for user
     public String generateToken(UsuarioDetails userDetails) {
-        String subject = userDetails.getUsername() + "|" + userDetails.getId();
+        String subject = userDetails.getEmail() + "|" + userDetails.getId();
 
         Map<String, Object> claims = new HashMap<>();
         // Agregando informacion adicional como "claim"
@@ -93,9 +95,9 @@ public class JwtUtils {
                 .compact();
     }
 
-    public boolean validateToken(String token, UserDetails userDetails) {
-        final String username = extractUsername(token);
-        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+    public boolean validateToken(String token, UsuarioDetails userDetails) {
+        final String email = extractEmail(token);
+        return (email.equals(userDetails.getEmail()) && !isTokenExpired(token));
     }
 
     public boolean validateJwtRefreshToken(String token) {

@@ -1,5 +1,7 @@
 package com.arkksoft.store.controllers;
 
+import javax.annotation.PostConstruct;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,6 +17,11 @@ import com.arkksoft.store.services.AuthService;
 public class AuthController {
     @Autowired
     private AuthService authService;
+
+    @PostConstruct
+    public void initRoleAndUser() {
+        authService.initUserSuperAdmin();
+    }
 
     @PostMapping("/signin")
     public ResponseEntity<?> signin(@RequestBody AuthDTO authDTO) throws Exception {
