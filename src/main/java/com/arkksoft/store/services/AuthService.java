@@ -69,8 +69,11 @@ public class AuthService {
         }
 
         // Create new user's account
+        Set<Role> roles = new HashSet<>();
+        roles.add(Role.ROLE_ADMIN);
         String password = passEncoder.encode(request.getPassword());
         User user = new User(request.getEmail(), password);
+        user.setRoles(roles);
         userDao.save(user);
 
         message.put("message", "El usuario se creo correctamente!");

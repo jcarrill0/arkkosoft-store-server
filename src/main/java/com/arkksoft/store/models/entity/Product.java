@@ -4,7 +4,7 @@ import java.util.Date;
 
 import javax.persistence.*;
 
-import com.fasterxml.jackson.annotation.*;
+// import com.fasterxml.jackson.annotation.*;
 
 import lombok.*;
 
@@ -21,14 +21,15 @@ public class Product {
     private Float price;
     private String description;
     private String image;
+    private Long categoryId;
     @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false, updatable = false)
     private Date createAt;
 
-    @ManyToOne
+    /* @ManyToOne
     @JsonIgnore
     @JoinColumn(name="categoryId")
-    private Category category;
+    private Category category; */
 
     @PrePersist
     public void prePersist() {

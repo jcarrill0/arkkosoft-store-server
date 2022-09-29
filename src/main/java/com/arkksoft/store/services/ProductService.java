@@ -27,7 +27,7 @@ public class ProductService {
 
     public Map<String, Object> addProduct(ProductDTO productDTO, MultipartFile file) {
         Map<String, Object> data = new HashMap<>();
-        Long categoryId = productDTO.getCategory();
+        Long categoryId = productDTO.getCategoryId();
 
         String msg = "La categoria  con id: "+categoryId+" no existe en la base de datos!!";
 
@@ -41,13 +41,12 @@ public class ProductService {
         productDTO.setImage(imageUrl);
         
         Product product = mapFromDto(productDTO);
-        product.setCategory(category.get());
+        product.setCategoryId(categoryId);
 
         data.put("product", productDao.save(product));
        
         return data;
     }
-
 
     public Map<String, Object> addProductImage(Long id, MultipartFile file) {
         Map<String, Object> data = new HashMap<>();
@@ -98,20 +97,26 @@ public class ProductService {
         return data;
     }
 
-    private String getImageId(String imageUrl) {
-        String[] imgArray = imageUrl.split("/");
-        String imgId = imgArray[imgArray.length-1].split("\\.")[0];
+    public Map<String, Object> updateProduct(ProductDTO productDTO, MultipartFile file) {
+        Map<String, Object> data = new HashMap<>();
 
-        return imgId;
+        this.updateImage(productDTO.getId());    
+        String imageUrl = cloudinaryService.upload(file);
+        productDTO.setImage(imageUrl); 
+    
+        Product product = mapFromDto(productDTO);
+
+        data.put("product", productDao.save(product));
+
+        return data;
     }
 
-    public Map<String, Object> updateProduct(Long id, ProductDTO productDTO, MultipartFile file) {
+    public Map<String, Object> updateProductNotImage(ProductDTO productDTO) {
         Map<String, Object> data = new HashMap<>();
-        //String msg = "El personaje con id: "+id+" no existe en la base de datos!!";
+       
+        Product product = mapFromDto(productDTO);
+        data.put("product", productDao.save(product));
 
-        ///productDao.deleteById(id);
-
-        data.put("message", "Producto con id: "+id+" fue eliminado exitosamente!!");
         return data;
     }
 
@@ -119,6 +124,19 @@ public class ProductService {
      * Fuction Helpers
      * 
      */
+
+    private void updateImage(Long productId) {
+        Product product = productDao.findById(productId).get();
+        String imageId = getImageId(product.getImage());
+        cloudinaryService.deleteFile(imageId);
+    }
+
+    private String getImageId(String imageUrl) {
+        String[] imgArray = imageUrl.split("/");
+        String imgId = imgArray[imgArray.length-1].split("\\.")[0];
+
+        return imgId;
+    }
     
     private Product mapFromDto(ProductDTO productDTO) {
         ModelMapper modelMapper = new ModelMapper();

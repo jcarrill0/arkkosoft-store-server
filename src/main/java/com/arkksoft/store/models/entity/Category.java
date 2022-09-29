@@ -4,7 +4,7 @@ import java.util.*;
 
 import javax.persistence.*;
 
-import com.fasterxml.jackson.annotation.*;  
+// import com.fasterxml.jackson.annotation.*;  
 
 import lombok.*;
 
@@ -22,9 +22,9 @@ public class Category {
     @Column(nullable = false, updatable = false)
     private Date createAt;
 
-    @JsonManagedReference
+    /* @JsonManagedReference
     @OneToMany(mappedBy = "category", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<Product> products;
+    private List<Product> products; */
     
     @PrePersist
     public void prePersist() {

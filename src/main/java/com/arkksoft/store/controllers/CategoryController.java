@@ -1,7 +1,6 @@
 package com.arkksoft.store.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.arkksoft.store.dto.CategoryDTO;
-import com.arkksoft.store.models.entity.Category;
 import com.arkksoft.store.services.CategoryService;
 
 @RestController
