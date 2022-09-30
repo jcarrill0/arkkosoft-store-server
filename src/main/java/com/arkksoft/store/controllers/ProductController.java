@@ -18,7 +18,10 @@ import org.springframework.web.multipart.MultipartFile;
 import com.arkksoft.store.dto.ProductDTO;
 import com.arkksoft.store.services.ProductService;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+
 @RestController
+@SecurityRequirement(name = "Authentication")
 @RequestMapping("/api/v1")
 public class ProductController {
     @Autowired

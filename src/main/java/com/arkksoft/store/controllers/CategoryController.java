@@ -15,7 +15,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.arkksoft.store.dto.CategoryDTO;
 import com.arkksoft.store.services.CategoryService;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+
 @RestController
+@SecurityRequirement(name = "Authentication")
 @RequestMapping("/api/v1")
 public class CategoryController {
     @Autowired

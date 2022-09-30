@@ -19,6 +19,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import com.arkksoft.store.security.jwt.*;
 import com.arkksoft.store.services.UsuarioDetailsService;
 
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
+
 /*
  * The prePostEnabled property enables Spring Security pre/post annotations.
  * The securedEnabled property determines if the @Secured annotation should be enabled.
@@ -28,6 +31,12 @@ import com.arkksoft.store.services.UsuarioDetailsService;
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
+@SecurityScheme(
+	name = "Authentication",
+	type = SecuritySchemeType.HTTP,
+	bearerFormat = "JWT",
+	scheme = "bearer"
+)
 public class WebSecurityConfig {
     @Autowired
     UserDetailsService usuarioDetailsService;
@@ -66,6 +75,7 @@ public class WebSecurityConfig {
         .authorizeRequests()        
         .antMatchers("/api/v1/auth/signin").permitAll()     
         .antMatchers("/api/v1/auth/signup").permitAll()
+        .antMatchers("/swagger-ui/**", "/javainuse-openapi/**","/bus/v3/api-docs/**").permitAll()
         .anyRequest().authenticated();
 
     http
@@ -78,7 +88,7 @@ public class WebSecurityConfig {
     public WebSecurityCustomizer webSecurityCustomizer() {
         return (web) -> web.debug(false)
           .ignoring()
-          .antMatchers("/css/**", "/js/**", "/img/**", "/lib/**", "/favicon.ico");
+          .antMatchers("/swagger-ui/**", "/v3/api-docs/**");
     }
 
     @Bean
