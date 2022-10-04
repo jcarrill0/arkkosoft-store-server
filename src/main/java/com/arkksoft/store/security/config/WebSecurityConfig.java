@@ -98,9 +98,10 @@ public class WebSecurityConfig {
             public void addCorsMappings(CorsRegistry registry) {
                 registry
                     .addMapping("/**")
-                    .allowedOrigins(urlCors.split(","))
+                    .allowedOrigins("*")
                     .allowedMethods("*")
-                    .allowedHeaders("*");
+                    .allowedHeaders("*")
+                    .exposedHeaders("Access-Control-Allow-Origin", "Access-Control-Allow-Credentials");
             }
         };
     }

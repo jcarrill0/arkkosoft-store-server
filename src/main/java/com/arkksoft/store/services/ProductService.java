@@ -27,7 +27,7 @@ public class ProductService {
 
     public Map<String, Object> addProduct(ProductDTO productDTO, MultipartFile file) {
         Map<String, Object> data = new HashMap<>();
-        Long categoryId = productDTO.getCategoryId();
+        Long categoryId = productDTO.getCategory();
 
         String msg = "La categoria  con id: "+categoryId+" no existe en la base de datos!!";
 

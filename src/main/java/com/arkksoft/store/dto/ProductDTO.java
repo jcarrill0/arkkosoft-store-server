@@ -14,5 +14,5 @@ public class ProductDTO {
     private Integer model;
     private String description;
     private String image;
-    private Long categoryId;
+    private Long category;
 }
